@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="renderer" content="webkit" />
+  <title>loading</title>
+  <script>
+
+  </script>
+  <link rel="stylesheet" href="./assets/css/normalize.css" />
+  <link rel="stylesheet" href="./assets/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="./assets/css/element-ui.theme-green.css">
+  <link rel="stylesheet" href="./assets/css/font-awesome.min.css">
+  <link rel="stylesheet" href="./assets/css/default.css" />
+  <style>
+    html,
+    body {
+      height: 100%;
+      width: 100%;
+      margin: 0px;
+    }
+    body {
+      visibility: hidden;
+    }
+    #app{
+      background-color: #35B075;
+    }
+    .flex {
+      display: flex;
+      height: 100%;
+      align-items: center;
+      background: url(assets/images/one-bg.png) repeat-x center bottom;
+    }
+
+    .logo {
+      position: absolute;
+      top: 35px;
+      left: 35px;
+    }
+
+    .login {
+      flex-basis: 300px;
+      align-self: center;
+    }
+
+    .appender {
+      flex: 1;
+    }
+
+    .row {
+      margin: 20px;
+    }
+
+    .el-input__inner:focus {
+      border: 2px solid #e6a23c;
+    }
+
+
+    .prepend {
+      width: 30px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .copyright {
+      text-align: center;
+      position: absolute;
+      color: #72E6AE;
+      bottom: 40px;
+      width: 100%;
+      left: 0;
+    }
+
+    .welcome {
+      color: white;
+      font-family: "Hiragino Sans GB", "冬青黑体简体中文", "Microsoft YaHei", "微软雅黑";
+      margin-bottom: 30px;
+    }
+    .license-info {
+      width: 100%;
+      line-height: 32px;
+      position:absolute;
+      left: 0;
+      bottom: 15px;
+      text-align: center;
+      color:#fff;
+    }
+    .license-info .license-date {
+      font-weight: bold;
+    }
+    .license-info a {
+      color: #ffd;
+      margin: 0 5px
+    }
+    .license-info a:hover {
+      color:#e6a23c
+    }
+    [v-cloak] {
+      display: none;
+    }
+  </style>
+  <script>
+(function(){
+  var canHideProperty = true
+  try {
+    Object.defineProperty({}, '_', {
+      value: 'x'
+    })
+  } catch (e) {
+    canHideProperty = false
+  }
+  if (typeof Object.defineProperties !== 'function' || !canHideProperty) {
+    // 如果浏览器不支持ecma262v5的Object.defineProperties或者存在BUG（比如IE8），那么Vue肯定是不可使用的
+    var msg = '向您致以歉意：<br>　　发现您正在使用的浏览器，不支持Vue.js，在此浏览器下本系统无法运行。建议您安装最新的浏览器以获得流畅的使用体验。<br>';
+				msg += '<br> 下载<a target="_blank" href="https://www.google.cn/chrome/">谷歌浏览器</a>';
+				msg += '&nbsp; 下载<a target="_blank" href="https://browser.360.cn/ee/">360极速浏览器</a>';
+				msg += '&nbsp; 下载<a target="_blank" href="https://www.microsoftedgeinsider.com/en-us/download">微软Edge</a>';
+    document.body.innerHTML = msg
+  }
+})()
+  </script>
+</head>
+
+<body>
+  <div id="app" class="flex">
+    <div class="logo">
+      <img src="assets/images/product/logo_login.png">
+    </div>
+    <div class="appender"></div>
+    <div class="login" v-cloak>
+      <div v-if="executing" style="text-align:center;color:white;font-size:16px;">
+        <div style="padding:20px;">正在登录...</div>
+      </div>
+      <form id="f1" v-if="!executing" @keyup.enter="login()" onsubmit="return false">
+        <div class="row">
+          <div class="welcome"> </div>
+        </div>
+        <div class="row">
+          <el-input placeholder="用户名" v-model="userName" autofocus>
+            <template slot="prepend">
+              <span class="prepend fa fa-user" height="28"></span>
+            </template>
+          </el-input>
+        </div>
+        <div class="row">
+          <el-input placeholder="密码" type="password" v-model="password">
+            <template slot="prepend">
+              <span class="prepend fa fa-lock" height="28"></span>
+            </template>
+          </el-input>
+        </div>
+        <div class="row" v-if="showVerifyCode">
+          <el-input placeholder="验证码" v-model="authCode">
+            <template slot="prepend">
+              <span class="prepend">
+                <img :src="authCodeURL" height="28" @click="refreshAuthCode">
+              </span>
+            </template>
+          </el-input>
+        </div>
+        <div class="row">
+			<el-button type="warning" size="medium" @click="login" style="width:100%;"> 登录 </el-button>
+        </div>
+      </form>
+    </div>
+    <div class="appender"></div>
+    <div v-if="editPwdModal" >
+      <edit-pwd-dialog :edit-pwd-modal="editPwdModal" :modal-title="modalTitle" :user-name="userName"></edit-pwd-dialog>
+    </div>
+	<div class="license-info" v-html="licenseData.licenseWarning"></div>
+  </div>
+
+
+  <script src="./lib/lodash.min.js"></script>
+  <script src="./lib/polyfill.min.js"></script>
+  <script src="./lib/axios.min.js"></script>
+  <script src="./lib/vue.js"></script>
+  <script src="./lib/vue-router.min.js"></script>
+  <script src="./lib/element-ui.min.js"></script>
+  <script src="./lib/vue-i18n.min.js"></script>
+  <script src="./lib/com.zving/util.js"></script>
+
+  <script src="./chunk-nodemodules.js?155702702"></script>
+  <script src="./chunk-common.js?155702702"></script>
+  <script src="./chunk-socialmedia.js?155702702"></script>
+  <script src="./chunk-platform.js?155702702"></script>
+  <script src="./chunk-contentcore.js?155702702"></script>
+  <script src="./chunk-components.js?155702702"></script>
+
+  <script src="./login.js?155702702"></script>
+</body>
+
+</html>
